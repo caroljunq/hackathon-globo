@@ -16,3 +16,6 @@
 
 # Importância das palavras
 * https://stevenloria.com/tf-idf/
+
+# TFIDF
+* https://nlpforhackers.io/tf-idf/

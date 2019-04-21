@@ -1,17 +1,37 @@
 import tweepy
 from tweepy import OAuthHandler
 from textblob import TextBlob
+from collections import Counter
+import unicodedata
+import re
 import json
-# from tfidf import *
+import nltk
+from pymongo import MongoClient
 
 # aws module python
 import boto3
 
-# full_tweets = []
+# custom data structure to count words
+# from trie import *
+
 credentials = {}
 with open('secrets.json') as json_file:
     credentials = json.load(json_file)
 
+# trie = Trie()
+all_words = []
+stopwords = nltk.corpus.stopwords.words('portuguese')
+
+
+# mongo connection
+# Connection
+client = MongoClient('mongodb://hack123:hack123@ds057944.mlab.com:57944/hack_globo')
+
+db = client['hack_globo']
+
+# Creating db
+tweets = db.tweets
+words = db.words
 
 class TwitterClient(object):
 
@@ -58,9 +78,13 @@ class TwitterClient(object):
 
                 # saving text of tweet
                 parsed_tweet['text'] = tweet.text
-                # saving sentiment of tweet
                 parsed_tweet['sentiment'] = self.detect_sentiment(tweet.text)
-                # full_tweets.append(TextBlob(tweet.text))
+                sem_acento = (''.join(ch for ch in unicodedata.normalize('NFKD', tweet.text) if not unicodedata.combining(ch)))
+
+                minusculo = re.sub(r"[^a-zA-Z0-9]+", ' ', sem_acento.lower())
+                # saving sentiment of tweet
+                for word in minusculo.split(' '):
+                    all_words.append(word)
 
                 # appending parsed tweet to tweets list
                 if tweet.retweet_count > 0:
@@ -76,19 +100,19 @@ class TwitterClient(object):
         except tweepy.TweepError as e:
             # print error (if any)
             print("Error : " + str(e))
-
 def main():
     # creating object of TwitterClient Class
     api = TwitterClient()
-    # calling function to get tweets
-    tweets = api.get_tweets(query = 'bolsonaro', count = 20)
 
-    # for i, blob in enumerate(full_tweets):
-    #     print("Top words in document {}".format(i + 1))
-    #     scores = {word: tfidf(word, blob, bloblist) for word in blob.words}
-    #     sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-    # for word, score in sorted_words[:3]:
-    #     print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
+    # calling function to get tweets
+    tweets = api.get_tweets(query = '(sétimo guardião) OR (Sétimo Guardião) OR (setimo guardiao) OR (setimoguardiao)', count = 50)
+
+    tweet_words = [x for x in all_words if x not in stopwords]
+
+    # inserting results on mongodb
+    db.tweets.insert_many(tweets)
+    words = [{'name':key, 'value':value} for key,value in Counter(tweet_words).items()]
+    db.words.insert_many(words)
 
 if __name__ == "__main__":
     # calling main function
