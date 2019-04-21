@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="/public/style.css"/>
+</head>
+<body>
+  <div class="row header-dash">
+    <img src="/public/logo.png" id="logo">
+    <div class="user-wrapper">
+      <img src="/public/mariana.png" id="mari">
+      <span>Mariana A. <img src="/public/menu.png" id="expansor"></span>
+    </div>
+  </div>
+  <div class="row chart-lines-custom">
+    <div class="col-sm-8" id="main" style="width: 100%"></div>
+    <div class="col-sm-3" id="main" style="width: 100%">
+      <img src="/public/mapa-brasil.png" id="brasil">
+    </div>
+  </div>
+  <span class="trends">Trends</span>
+  <div class="row word-cloud">
+    <img src="/public/word.png">
+  </div>
+  <div class="tweets">
+    <span class="tw-title">Tweets</span>
+    <span class="status positive">Positive <%= sentiments['POSITIVE'] %></span>
+    <span class="status negative">Negative <%= sentiments['NEGATIVE'] %></span>
+    <span class="status neutral">Neutral <%= sentiments['NEUTRAL'] %></span>
+    <% for(var i=0; i < tweets.length; i++) { %>
+      <div class="t-messages">
+        <div class="row header-tweet">
+          <span class="user-name"><%= tweets[i].user %></span>
+          <span class="sentimento"><%= tweets[i].sentiment %></span>
+        </div>
+        <span class="t-msg"><%= tweets[i].text %></span>
+      </div>
+   <% } %>
+  </div>
+  <script
+    src="https://code.jquery.com/jquery-3.4.0.js"
+    integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo="
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts-en.common.js"></script
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="/public/dash.js"></script>
+  <script>
+      let tweets = <%-JSON.stringify(tweets)%>;
+      let words = <%-JSON.stringify(words)%>;
+    </script>
+</body>
+
+</html>

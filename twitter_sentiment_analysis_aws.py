@@ -78,6 +78,7 @@ class TwitterClient(object):
 
                 # saving text of tweet
                 parsed_tweet['text'] = tweet.text
+                parsed_tweet['user'] = tweet.user.name
                 parsed_tweet['sentiment'] = self.detect_sentiment(tweet.text)
                 sem_acento = (''.join(ch for ch in unicodedata.normalize('NFKD', tweet.text) if not unicodedata.combining(ch)))
 
@@ -105,7 +106,7 @@ def main():
     api = TwitterClient()
 
     # calling function to get tweets
-    tweets = api.get_tweets(query = '(sétimo guardião) OR (Sétimo Guardião) OR (setimo guardiao) OR (setimoguardiao)', count = 50)
+    tweets = api.get_tweets(query = '(sétimo guardião) OR (Sétimo Guardião) OR (setimo guardiao) OR (setimoguardiao)', count = 100)
 
     tweet_words = [x for x in all_words if x not in stopwords]
 
